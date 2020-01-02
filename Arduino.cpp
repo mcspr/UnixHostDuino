@@ -123,17 +123,24 @@ static void handleControlC(int /*sig*/) {
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
 
-int main(int argc, char** argv) {
+int __main(int argc, char** argv) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
-	enableRawMode();
+  enableRawMode();
 
   setup();
   while (true) {
-		char c = '\0';
+    char c = '\0';
     read(STDIN_FILENO, &c, 1);
-		if (c) Serial.insertChar(c);
+    if (c) Serial.insertChar(c);
     loop();
     yield();
   }
+}
+
+int main(int argc, char** argv)
+__attribute__((weak));
+
+int main(int argc, char** argv) {
+  return __main(argc, argv);
 }
